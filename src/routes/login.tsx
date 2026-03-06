@@ -1,6 +1,7 @@
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { authClient } from '#/lib/auth-client'
 import { getSession } from '#/lib/auth-fns'
-import { Button, Input } from '@base-ui/react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/login')({
