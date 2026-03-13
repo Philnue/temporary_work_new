@@ -1,7 +1,8 @@
 import { eq } from 'drizzle-orm'
-import { user } from '@/drizzle/auth-schema'
+import { user } from '@/drizzle/schemas/auth-schema'
+import { userProfile } from '@/drizzle/schemas/identity-schema'
 import { db } from '@/drizzle/index'
-import { auth } from '@/lib/auth'
+import { auth } from '@/auth/server/auth'
 
 type SeedAccount = {
   name: string
@@ -31,10 +32,12 @@ function getNestedError(error: unknown) {
 }
 
 async function seedAccounts() {
-  console.log('🌱 Seeding accounts...')
+  console.log('Seeding accounts...')
 
-  let createdCount = 0
-  let skippedCount = 0
+  let usersCreated = 0
+  let usersSkipped = 0
+  let profilesCreated = 0
+  let profilesSkipped = 0
 
   for (const accountData of accounts) {
     const existingUsers = await db
@@ -43,29 +46,58 @@ async function seedAccounts() {
       .where(eq(user.email, accountData.email))
       .limit(1)
 
-    if (existingUsers.length > 0) {
-      skippedCount += 1
-      console.log(`⚠️  User ${accountData.email} already exists, skipping`)
-      continue
+    const existingUser = existingUsers.at(0)
+
+    let userId = existingUser?.id
+
+    if (!userId) {
+      const signUpResult = await auth.api.signUpEmail({
+        body: {
+          name: accountData.name,
+          email: accountData.email,
+          password: accountData.password,
+        },
+      })
+
+      usersCreated += 1
+
+      userId = signUpResult.user.id
+      console.log(`Created user: ${accountData.name} (${accountData.email})`)
+    } else {
+      usersSkipped += 1
+      console.log(
+        `User ${accountData.email} already exists, skipping user create`,
+      )
     }
 
-    await auth.api.signUpEmail({
-      body: {
-        name: accountData.name,
-        email: accountData.email,
-        password: accountData.password,
-      },
-    })
+    const existingProfiles = await db
+      .select({ userId: userProfile.userId })
+      .from(userProfile)
+      .where(eq(userProfile.userId, userId))
+      .limit(1)
 
-    createdCount += 1
-    console.log(`✅ Created user: ${accountData.name} (${accountData.email})`)
+    const existingProfile = existingProfiles.at(0)
+
+    if (!existingProfile) {
+      await db.insert(userProfile).values({
+        userId,
+        displayName: accountData.name,
+      })
+      profilesCreated += 1
+      console.log(`Created profile for: ${accountData.email}`)
+    } else {
+      profilesSkipped += 1
+      console.log(`Profile for ${accountData.email} already exists, skipping`)
+    }
   }
 
-  console.log(`🌱 Done! Created: ${createdCount}, Skipped: ${skippedCount}.`)
+  console.log(
+    `Done. Users created: ${usersCreated}, users skipped: ${usersSkipped}, profiles created: ${profilesCreated}, profiles skipped: ${profilesSkipped}.`,
+  )
 }
 
 seedAccounts().catch((error) => {
-  console.error('❌ Failed to seed accounts.')
+  console.error('Failed to seed accounts.')
 
   const nestedError = getNestedError(error)
   if (
@@ -75,7 +107,7 @@ seedAccounts().catch((error) => {
     nestedError.code === '42P01'
   ) {
     console.error(
-      'The auth tables are missing. Run `pnpm db:push` or `pnpm db:migrate` first.',
+      'The auth/profile tables are missing. Run `pnpm db:push` or `pnpm db:migrate` first.',
     )
     process.exitCode = 1
     return
