@@ -6,7 +6,8 @@ import {
   index,
   integer,
   jsonb,
-  pgSchema,
+  pgEnum,
+  pgTable,
   real,
   text,
   time,
@@ -18,29 +19,27 @@ import { createdAt, updatedAt, uuidPrimaryKey } from '@/drizzle/mixins'
 import { user } from './auth-schema'
 import { facilities } from './org-schema'
 
-export const staffing = pgSchema('staffing')
-
-export const shiftStatusEnum = staffing.enum('shift_status', [
+export const shiftStatusEnum = pgEnum('shift_status', [
   'open',
   'assigned',
   'completed',
   'cancelled',
 ])
 
-export const leaveStatusEnum = staffing.enum('leave_status', [
+export const leaveStatusEnum = pgEnum('leave_status', [
   'pending',
   'approved',
   'rejected',
 ])
 
-export const leaveTypeEnum = staffing.enum('leave_type', [
+export const leaveTypeEnum = pgEnum('leave_type', [
   'vacation',
   'sick',
   'personal',
   'other',
 ])
 
-export const dayOfWeekEnum = staffing.enum('day_of_week', [
+export const dayOfWeekEnum = pgEnum('day_of_week', [
   'monday',
   'tuesday',
   'wednesday',
@@ -50,26 +49,26 @@ export const dayOfWeekEnum = staffing.enum('day_of_week', [
   'sunday',
 ])
 
-export const applicationStatusEnum = staffing.enum('application_status', [
+export const applicationStatusEnum = pgEnum('application_status', [
   'pending',
   'accepted',
   'rejected',
 ])
 
-export const assignmentStatusEnum = staffing.enum('assignment_status', [
+export const assignmentStatusEnum = pgEnum('assignment_status', [
   'pending',
   'accepted',
   'rejected',
 ])
 
-export const demandStatusEnum = staffing.enum('demand_status', [
+export const demandStatusEnum = pgEnum('demand_status', [
   'open',
   'assigned',
   'cancelled',
   'completed',
 ])
 
-export const shifts = staffing.table(
+export const shifts = pgTable(
   'shifts',
   {
     id: uuidPrimaryKey('id'),
@@ -103,7 +102,7 @@ export const shifts = staffing.table(
   ],
 )
 
-export const availability = staffing.table(
+export const availability = pgTable(
   'availability',
   {
     id: uuidPrimaryKey('id'),
@@ -130,7 +129,7 @@ export const availability = staffing.table(
   ],
 )
 
-export const leaveRequests = staffing.table(
+export const leaveRequests = pgTable(
   'leave_requests',
   {
     id: uuidPrimaryKey('id'),
@@ -158,7 +157,7 @@ export const leaveRequests = staffing.table(
   ],
 )
 
-export const shiftApplications = staffing.table(
+export const shiftApplications = pgTable(
   'shift_applications',
   {
     id: uuidPrimaryKey('id'),
@@ -181,7 +180,7 @@ export const shiftApplications = staffing.table(
   ],
 )
 
-export const shiftAssignments = staffing.table(
+export const shiftAssignments = pgTable(
   'shift_assignments',
   {
     id: uuidPrimaryKey('id'),
@@ -208,7 +207,7 @@ export const shiftAssignments = staffing.table(
   ],
 )
 
-export const demands = staffing.table(
+export const demands = pgTable(
   'demands',
   {
     id: uuidPrimaryKey('id'),
@@ -243,7 +242,7 @@ export const demands = staffing.table(
   ],
 )
 
-export const demandApplications = staffing.table(
+export const demandApplications = pgTable(
   'demand_applications',
   {
     id: uuidPrimaryKey('id'),
@@ -267,7 +266,7 @@ export const demandApplications = staffing.table(
   ],
 )
 
-export const dateAvailability = staffing.table(
+export const dateAvailability = pgTable(
   'date_availability',
   {
     id: uuidPrimaryKey('id'),

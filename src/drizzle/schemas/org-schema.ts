@@ -2,23 +2,22 @@ import {
   boolean,
   index,
   jsonb,
-  pgSchema,
+  pgEnum,
+  pgTable,
   text,
   uuid,
 } from 'drizzle-orm/pg-core'
 import { createdAt, updatedAt, uuidPrimaryKey } from '@/drizzle/mixins'
 import { user } from './auth-schema'
 
-export const org = pgSchema('org')
-
-export const facilityTypeEnum = org.enum('facility_type', [
+export const facilityTypeEnum = pgEnum('facility_type', [
   'kindergarten',
   'school',
   'daycare',
   'other',
 ])
 
-export const facilities = org.table(
+export const facilities = pgTable(
   'facilities',
   {
     id: uuidPrimaryKey('id'),

@@ -4,7 +4,8 @@ import {
   index,
   integer,
   jsonb,
-  pgSchema,
+  pgEnum,
+  pgTable,
   text,
   timestamp,
   uuid,
@@ -13,14 +14,12 @@ import { createdAt, updatedAt, uuidPrimaryKey } from '@/drizzle/mixins'
 import { user } from './auth-schema'
 import { shiftAssignments } from './staffing-schema'
 
-export const compliance = pgSchema('compliance')
-
-export const ratingTypeEnum = compliance.enum('rating_type', [
+export const ratingTypeEnum = pgEnum('rating_type', [
   'educator_rates_facility',
   'facility_rates_educator',
 ])
 
-export const documents = compliance.table(
+export const documents = pgTable(
   'documents',
   {
     id: uuidPrimaryKey('id'),
@@ -53,7 +52,7 @@ export const documents = compliance.table(
   ],
 )
 
-export const ratings = compliance.table(
+export const ratings = pgTable(
   'ratings',
   {
     id: uuidPrimaryKey('id'),
@@ -77,7 +76,7 @@ export const ratings = compliance.table(
   ],
 )
 
-export const auditLogs = compliance.table(
+export const auditLogs = pgTable(
   'audit_logs',
   {
     id: uuidPrimaryKey('id'),

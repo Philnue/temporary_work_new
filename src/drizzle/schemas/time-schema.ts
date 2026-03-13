@@ -2,7 +2,8 @@ import {
   date,
   index,
   integer,
-  pgSchema,
+  pgEnum,
+  pgTable,
   text,
   timestamp,
   uuid,
@@ -11,16 +12,14 @@ import { createdAt, updatedAt, uuidPrimaryKey } from '@/drizzle/mixins'
 import { user } from './auth-schema'
 import { shiftAssignments, shifts } from './staffing-schema'
 
-export const timekeeping = pgSchema('timekeeping')
-
-export const timesheetStatusEnum = timekeeping.enum('timesheet_status', [
+export const timesheetStatusEnum = pgEnum('timesheet_status', [
   'pending',
   'approved',
   'disputed',
   'paid',
 ])
 
-export const timesheets = timekeeping.table(
+export const timesheets = pgTable(
   'timesheets',
   {
     id: uuidPrimaryKey('id'),

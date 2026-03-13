@@ -3,16 +3,14 @@ import {
   boolean,
   check,
   integer,
-  pgSchema,
+  pgTable,
   text,
   uuid,
 } from 'drizzle-orm/pg-core'
 import { createdAt, updatedAt } from '@/drizzle/mixins'
 import { user } from './auth-schema'
 
-export const ops = pgSchema('ops')
-
-export const systemRuntime = ops.table(
+export const systemRuntime = pgTable(
   'system_runtime',
   {
     id: integer('id').primaryKey().default(1),

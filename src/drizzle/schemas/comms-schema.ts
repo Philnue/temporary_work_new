@@ -2,7 +2,8 @@ import {
   boolean,
   index,
   jsonb,
-  pgSchema,
+  pgEnum,
+  pgTable,
   text,
   uniqueIndex,
   uuid,
@@ -10,9 +11,7 @@ import {
 import { createdAt, updatedAt, uuidPrimaryKey } from '@/drizzle/mixins'
 import { user } from './auth-schema'
 
-export const comms = pgSchema('comms')
-
-export const notificationTypeEnum = comms.enum('notification_type', [
+export const notificationTypeEnum = pgEnum('notification_type', [
   'shift',
   'leave',
   'document',
@@ -21,7 +20,7 @@ export const notificationTypeEnum = comms.enum('notification_type', [
   'general',
 ])
 
-export const deviceTokens = comms.table(
+export const deviceTokens = pgTable(
   'device_tokens',
   {
     id: uuidPrimaryKey('id'),
@@ -41,7 +40,7 @@ export const deviceTokens = comms.table(
   ],
 )
 
-export const notifications = comms.table(
+export const notifications = pgTable(
   'notifications',
   {
     id: uuidPrimaryKey('id'),

@@ -4,22 +4,21 @@ import {
   index,
   integer,
   jsonb,
-  pgSchema,
+  pgEnum,
+  pgTable,
   text,
   uuid,
 } from 'drizzle-orm/pg-core'
 import { createdAt, updatedAt } from '@/drizzle/mixins'
 import { user } from './auth-schema'
 
-export const identity = pgSchema('identity')
-
-export const accountStatusEnum = identity.enum('account_status', [
+export const accountStatusEnum = pgEnum('account_status', [
   'pending',
   'active',
   'suspended',
 ])
 
-export const onboardingStageEnum = identity.enum('onboarding_stage', [
+export const onboardingStageEnum = pgEnum('onboarding_stage', [
   'pending',
   'documents_review',
   'interview',
@@ -27,7 +26,7 @@ export const onboardingStageEnum = identity.enum('onboarding_stage', [
   'rejected',
 ])
 
-export const userProfile = identity.table(
+export const userProfile = pgTable(
   'user_profile',
   {
     userId: uuid('user_id')
